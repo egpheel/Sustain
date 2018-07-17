@@ -1,0 +1,94 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scripts/Map.gd" type="Script" id=1]
+[ext_resource path="res://tilesets/tileset.tres" type="TileSet" id=2]
+[ext_resource path="res://scenes/MapUI.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scripts/TileTypes.gd" type="Script" id=4]
+[ext_resource path="res://scripts/Propagate.gd" type="Script" id=5]
+[ext_resource path="res://scripts/AutoPropagate.gd" type="Script" id=6]
+[ext_resource path="res://scripts/Decay.gd" type="Script" id=7]
+
+[node name="Map" type="Node2D" index="0"]
+
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TileMap" type="TileMap" parent="." index="0"]
+
+mode = 1
+tile_set = ExtResource( 2 )
+cell_size = Vector2( 32, 16 )
+cell_quadrant_size = 16
+cell_custom_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+cell_half_offset = 2
+cell_tile_origin = 0
+cell_y_sort = false
+cell_clip_uv = false
+collision_use_kinematic = false
+collision_friction = 1.0
+collision_bounce = 0.0
+collision_layer = 1
+collision_mask = 1
+occluder_light_mask = 1
+format = 1
+tile_data = PoolIntArray( -65527, 0, 0, -65526, 0, 0, -65525, 0, 0, -65524, 0, 0, -65523, 11, 0, -65522, 11, 0, -65521, 13, 0, -65520, 12, 0, 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 0, 0, 13, 11, 0, 14, 11, 0, 15, 13, 0, 16, 12, 0, 65545, 0, 0, 65546, 0, 0, 65547, 0, 0, 65548, 0, 0, 65549, 11, 0, 65550, 11, 0, 65551, 13, 0, 65552, 12, 0, 131081, 0, 0, 131082, 0, 0, 131083, 0, 0, 131084, 0, 0, 131085, 11, 0, 131086, 11, 0, 131087, 13, 0, 131088, 12, 0 )
+_sections_unfolded = [ "Cell" ]
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MapUI" parent="." index="1" instance=ExtResource( 3 )]
+
+visible = false
+
+[node name="Functionality" type="Node" parent="." index="2"]
+
+[node name="TileTypes" type="Node" parent="Functionality" index="0"]
+
+script = ExtResource( 4 )
+
+[node name="Propagate" type="Node" parent="Functionality" index="1"]
+
+editor/display_folded = true
+script = ExtResource( 5 )
+
+[node name="PropagateTimer" type="Timer" parent="Functionality/Propagate" index="0"]
+
+process_mode = 1
+wait_time = 2.0
+one_shot = true
+autostart = false
+
+[node name="AutoPropagate" type="Node" parent="Functionality" index="2"]
+
+script = ExtResource( 6 )
+
+[node name="AutoPropagateTimer" type="Timer" parent="Functionality/AutoPropagate" index="0"]
+
+process_mode = 1
+wait_time = 4.0
+one_shot = false
+autostart = false
+
+[node name="Decay" type="Node" parent="Functionality" index="3"]
+
+script = ExtResource( 7 )
+
+[node name="DecayTimer" type="Timer" parent="Functionality/Decay" index="0"]
+
+process_mode = 1
+wait_time = 4.0
+one_shot = false
+autostart = false
+
+[connection signal="tile_changed" from="MapUI" to="." method="_on_UI_tile_changed"]
+
+[connection signal="timeout" from="Functionality/Propagate/PropagateTimer" to="Functionality/Propagate" method="_on_PropagateTimer_timeout"]
+
+[connection signal="timeout" from="Functionality/AutoPropagate/AutoPropagateTimer" to="Functionality/AutoPropagate" method="_on_AutoPropagateTimer_timeout"]
+
+[connection signal="timeout" from="Functionality/Decay/DecayTimer" to="Functionality/Decay" method="_on_DecayTimer_timeout"]
+
+
